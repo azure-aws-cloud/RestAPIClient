@@ -18,4 +18,8 @@ mvn clean package -DgitTag=v1.2.3 -DbuildNumber=123
 java -cp target/json-http-excel-guava.jar com.rhushi.BuildInfo
 ```
 
+## Create package based on release (tag = r2 as shown below)
+``` 
+gh workflow run "Manual Build and Release" --repo azure-aws-cloud/RestAPIClient --ref master --field "tag=r2"
+```
 
