@@ -9,13 +9,13 @@ This is a project to generate the fat jar for 3DExperience client calls using
 # Package the jar
 
 ```
-mvn clean package
+mvn clean package -DgitTag=v1.2.3 -DbuildNumber=123
 ```
 
 ## Run the code
 
 ```
-java -jar target/json-http-excel-guava.jar
+java -cp target/json-http-excel-guava.jar com.rhushi.BuildInfo
 ```
 
 

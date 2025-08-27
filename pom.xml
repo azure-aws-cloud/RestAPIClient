@@ -12,6 +12,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <gitTag>unspecified</gitTag>
+        <buildNumber></buildNumber>            <!-- empty default -->
+        <buildNumberSuffix></buildNumberSuffix> <!-- will be set by plugin -->
     </properties>
 
     <dependencies>
@@ -36,7 +40,7 @@
             <version>33.1.0-jre</version>
         </dependency>
 
-        <!-- Log4j API only (no core) to fix missing class error safely -->
+        <!-- Log4j API only -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -56,6 +60,7 @@
             <version>2.0.13</version>
         </dependency>
 
+        <!-- Log4j Core -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -66,8 +71,15 @@
     <build>
         <finalName>json-http-excel-guava</finalName>
 
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering> <!-- Enable property replacement -->
+            </resource>
+        </resources>
+
         <plugins>
-            <!-- Compiler plugin -->
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -76,6 +88,49 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
+            </plugin>
+
+            <!-- Build timestamp -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Use timezone in timestamp -->
+                            <timestampFormat>yyyy-MM-dd h:mm:ss a z</timestampFormat>
+                            <timezone>America/New_York</timezone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Set buildNumberSuffix equal to buildNumber -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>set-build-number-suffix</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>buildNumberSuffix</name>
+                            <value>${buildNumber}</value>
+                            <regex>^(.*)$</regex>
+                            <replacement>$1</replacement>
+                            <failIfNoMatch>false</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Assembly plugin for fat jar -->
